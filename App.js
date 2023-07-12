@@ -1,1155 +1,436 @@
+let searchEvent = document.getElementById('search-bar');
+let searchBtn = document.getElementById('fetchStart');
+let tableBody = document.getElementsByClassName('table-data-filling-in-script')[0];
+let searchingOptionLi = document.querySelector('.searching-option-li');
 
-:root {    
-    --leftbar-bg: #A2CDB0;
-    --leftbar-color: #000000;
-    --table-bg: #fdcedfb9;
-    --table-trade-btn-bg: #9376E0;
-    --table-head-bg: #99A98F;
-    --table-data-odd-bg: #D14D72;
-    --table-data-even-bg: #E9A178;
-    --table-brade-btn-color: #060047;
-    /* --table-head-color: #f6f608fe; */
-    --table-data-odd-color: #191825;
-    --table-data-even-color: #0C1E7F;
-    --stocks-bg: #6b728eb8;
-    /* --stock-card-bg: #46C2CB; */
-    /* not taken */
-    --stock-card-company: #46C2CB;
-    
-    --stock-card-symbol: #E0144C;
-    --stock-card-btn1: #FF5858;
-    --stock-card-btn2: #C8DBBE;
-    --stock-card-bg-hover: #FF577F;
-    --stock-card-btn1: #95CD41;
-    --stock-card-btn2: #FF5C58;
-    /* not taken */
-    --stock-card-bg: #F2EAD3;
-    --stock-card-company: #712B75;
-    --stock-card-symbol: #A68DAD;
-    --search-result-bg: #ADE792;
-    --search-result-color: #3A1078;
-    --search-result-symbol: #9BE8D8;
+let apiArray = ["AO48IFCXLA3BX1O9", "T4Y29QFCCCFF7V03", "T4Y29QFCCCFF7V03", "7V18I4NFIV62Z5ZP", "HDW0XJ41JMQO936Y", "VU787JW5IOP6PXFZ", "IPW3ZIJPAL09OOPG", "IPW3ZIJPAL09OOPG", "3YI9UO1YNH2VBACE", "WKHEQRWNMJUGI3HG"];
 
-}
+let keyForApi = "AO48IFCXLA3BX1O9";
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    transition: 0.5s ease-in;
-}
-
-body {
-    /* background-color: #BDCDD6; */
-    /* background: linear-gradient(rgb(169, 144, 126), rgb(243, 222, 186)) */
-    /* background: radial-gradient(#F9D371, #EF2F88); */
-    position: relative;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+let apiIndex = 0;
+function keyForApiFn() {
+  keyForApi = apiArray[apiIndex];
+  apiIndex++;
+  if (apiIndex == apiArray.length - 1) {
+    apiIndex = 0;
   }
-  
-  
-  
-
-  
-
-/* ---------------Whole Home page------------  */
-.root-body {
-    border-radius: 0.4rem;
-    display: grid;
-    height: 100vh;
-    grid-template-columns: 1fr 4fr 1.5fr;    
 }
 
-/*---------- Nav bar --------------*/
-#logo-img {
-    width: 80px;
-    border-radius: 50%;
-    padding: 20px;
-}
-.left-side-bar {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;   
-    background-color: var(--leftbar-bg);
+let choosingTradeDetails = "";
 
-    border-radius: 8px;
-    padding-left: 15px;
-    padding-bottom: 10px;
-    height: 98vh;
-    width: 100%;
-    margin: auto;
-    margin-left: 10px;
-}
-.user-selection-nav-bar li {
-    list-style: none;
-    padding-top: 5px;
-}
-.user-selection-nav-bar li a {
-    text-decoration: none;
-    color: var(--leftbar-color);
-    font-weight: 750;
-    font-size: 17px;
-}
-.fa-solid {
-    padding-right: 10px;
-}
+// Searching Function
+searchBtn.onclick = function () {
+  keyForApiFn();
+  let searchingKeyWords = searchEvent.value;
+  let url = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${searchingKeyWords}&apikey=${keyForApi}`
+  console.log(keyForApi);
+  let urlforPrice = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${searchingKeyWords}&apikey=${keyForApi}`;
 
-/* -------------- Main Page --------------- */
-.heading-portion>h1 {
-    padding: 10px;
-    padding-left: 18px;
-    font-family:Verdana, Geneva, Tahoma, sans-serif ;
-}
-.heading-portion>h1 {
-    font-size: 24px;
-}
-.error-message {
-    font-size: 18px;
-    color: red;
-    font-weight: 800;
-}
-
-.table-of-data {
-    margin: auto;
-    width: 95%;
-    height: 60vh;
-    background-color: var(--table-bg);
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-
-.table-of-data {
-    overflow: scroll;
-    text-align: center;
-}
-
-.table-of-data::-webkit-scrollbar {
-    display: none;
-}
-
-#table-main {
-    /* margin-left: 15px; */
-    margin: auto;
-}
-.table-heading {
-    font-weight: 800;
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 15px;
-}
-.table-heading > th{
-    padding: 5px 20px;
-}
-.table-heading {
-    background-color: var(--table-head-bg) !important;
-    color: var(--table-head-color);
-}
-
-.table-data-filling-in-script {
-    font-size: 15px;
-}
-
-#table-main tr:nth-child(even) {
-    background-color: var(--table-data-even-bg);
-    color: var(--table-data-even-color);
-}
-#table-main tr:nth-child(odd) {
-    background-color: var(--table-data-odd-bg);
-    color: var(--table-data-odd-color);
-}
-
-
-.random-data-main-page {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    width: 95%;
-    padding: 10px;
-    border-bottom-left-radius: 8px; 
-    border-bottom-right-radius: 8px; 
-    height: 30vh;
-    overflow: scroll; 
-    background-color: var(--stocks-bg);
-}
-
-.random-data-main-page::-webkit-scrollbar {
-    display: none;
-}
-
-.stock {    
-    border-radius: 8px;
-    background-color: var(--stock-card-bg);
-    width: 250px;
-    height: 130px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    transition: 0.3s ease;
-    margin: 10px;
-    text-align: center;
-    box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.403);
-}
-.stock-name {
-    color: var(--stock-card-company);
-    font-family: 'Agdasima', sans-serif;
-    font-size: 16px;
-    font-weight: 800;
-}
-.stock-symbol {
-    color: var(--stock-card-symbol);
-    font-size: 14px;
-    font-weight: 400;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-}
-.stock:hover {
-    transition: 0.3s ease;
-    transform: scale(1.04);
-}
-
-.region-heading {
-    font-family: 'Agdasima', sans-serif;
-    font-size: 14px;
-    padding-left: 15px;
-    
-}
-.region {
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    color: rgb(38, 37, 37);
-    font-size: 15px;
-}
-
-.trade-selection {
-    background-color: var(--table-trade-btn-bg);
-    color: var(--table-brade-btn-color);
-    padding: 5px 10px;
-    border-radius: 5px;
-    border: none;
-    font-size: 14px;
-    margin-left: 10px;
-}
-.trade-selection.active {
-    background-color: rgba(12, 149, 241, 0.673);
-    color: black;
-    font-size: 15px;
-    font-weight: 700;
-}
-.trade-data {
-    border: none;
-    padding: 7px;
-    margin-top: 10px;
-    border-radius: 4px;
-}
-.trade-data.remove {
-    background-color: rgba(255, 0, 0, 0.505);
-    font-size: 12px;
-    width: 65px;
-}
-.trade-data.analytics {
-    font-size: 12px;
-    width: 97px;
-    background-color: orange;
-}
-
-.trade-type-selection {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    padding: 10px 5px;
+  fetchApiDataForsearch(url);
 
 }
 
 
-.data-graph-splitting {
-    display: flex;
-    align-items: center;
-    /* background-color: rgba(236, 217, 13, 0.3); */
-    justify-content: center;
-    
-}
+async function fetchApiData(apiUrl = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=ama&apikey=${keyForApi}`) {
+  keyForApiFn();
+  try {
+    const response = await fetch(apiUrl);
 
-#myChart {
-    width: 400px;
-    height: 400px;
-    background-color: white;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-
-
-
-/* ----------right side data------------ */
-.rights-side-data {
-    margin-top: 20px;
-}
-#search-close-button {
-    font-size: 18px;
-    padding: 8px 10px;
-    border: none;
-    border-radius: 10px;
-}
-
-#search-bar {
-    height: 30px;
-    font-size: 16px;
-    border: none;
-    width: 70%;
-    padding-left: 10px;
-}
-#searching-section button {
-    border: none;
-    background-color: white;
-}
-
-#searching-section {
-    border: 1px solid black;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 270px;
-}
-
-#fetchStart {
-    border: none;
-    font-size: 18px;
-    padding: 8px 10px;
-    margin: 0;
-    
-}
-
-.searching-option {
-    display: flex;
-    flex-direction: column;
-    margin-right: 10px;
-    position: absolute;
-    z-index: 10;
-    right: 10px;
-    top: 8px;
-    background-color: white;
-}
-
-.searching-option-li {
-    box-shadow: 0px 10px 15px 5px rgb(46, 37, 37);
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    gap: 10px;
-    max-height: 60vh;
-    overflow: scroll;
-}
-
-.searching-option-li::-webkit-scrollbar {
-    display: none;
-}
-
-.searching-option-li {
-    display: none;
-    background-color: white;
-}
-
-.searching-option-li li {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    width: 250px;
-    height: fit-content;
-    border-radius: 8px;
-    justify-content: space-between;
-    align-items: center;
-    padding-left: 10px;
-    background-color: var(--search-result-bg);
-    color: var(--search-result-color);
-    margin-bottom: 10px;
-}
-
-.searching-option-li li div{
-    display: flex;
-    padding: 5px;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.searching-option-li li h4{
-    font-size: 13px;
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-
-}
-.searching-option-li li h5{
-    font-family:monospace;
-    font-size: 14px;
-    font-weight: 200px;
-    padding: 0px 5px;
-    background-color: var(--search-result-symbol);
-}
-.searching-option-li li h3{
-    font-size: 16px;
-    font-family:monospace;
-}
-
-.searching-option-li li i{
-    opacity: 0.8;
-}
-
-.searching-option-li button {
-    height: 30px;
-    width: 100px;
-    border: none;
-    background-color: rgb(138, 26, 219);        
-}
-.bar-icon, .bar-close {
-    display: none;
-}
-
-
-
-@media only screen and (max-width: 1024px) {
-/*---------- Nav bar --------------*/
-    #logo-img {
-        width: 60px;
-        padding: 10px;
+    if (!response.ok) {
+      throw new Error("Error occurs");
     }
-    .left-side-bar {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;   
-        border-radius: 8px;
-        padding-left: 10px;
-        padding-bottom: 10px;
-        height: 98vh;
-        width: 100%;
-        margin: auto;
-        margin-left: 10px;
+    const data = await response.json();
+    console.log(data, " table fetch")
+
+    if (data["Error Message"]) {
+      tableBody.innerHTML = "";
+      alert("No Data in API");
+    }
+    else if ("Note".includes("Thank you for using Alpha Vantage")) {
+      tableBody.innerHTML = "";
+      alert("Please try after some time - Standard API call frequency is 5 calls per minute and 500 calls per day")
     }
 
-    .user-selection-nav-bar li a {
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 14px;
+    if (data.hasOwnProperty(choosingTradeDetails)) {
+      const timeSeries = data[choosingTradeDetails];
+      tableDataFill(timeSeries);
     }
-
-    /* -------------- Main Page --------------- */
-    .heading-portion>h1 {
-        padding: 10px;
-        padding-left: 15px;
-        font-family:Verdana, Geneva, Tahoma, sans-serif ;
-    }
-    .heading-portion>h1 {
-        font-size: 18px;
-    }
-    .error-message {
-        font-size: 15px;
-        color: red;
-        font-weight: 800;
-    }
-
-    .table-of-data {
-        margin: auto;
-        width: 95%;
-        height: 60vh;
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
-    }
-
-    .table-heading {
-        font-weight: 800;
-        font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        font-size: 13px;
-    }
-    .table-heading > th{
-        padding: 4px 20px;
-    }
-    .table-data-filling-in-script {
-        font-size: 13px;
-    }
-
-    .random-data-main-page {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        width: 95%;
-        padding: 10px;
-        border-bottom-left-radius: 6px; 
-        border-bottom-right-radius: 6px; 
-        height: 30vh;
-        overflow: scroll; 
-    }
+  } catch (error) {
+    tableBody.innerHTML = "";
+    console.log(error, " Error is here");
+  }
+}
 
 
-    .stock {    
-        border-radius: 6px;    
-        width: 220px;
-        height: 100px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 8px;
-        transition: 0.3s ease;    
-        margin: 8px;
-        text-align: center;
-        box-shadow: 0px 8px 8px 0px rgba(0, 0, 0, 0.403);
+// async function fetchApiDataForsearch(apiUrl = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=ama&apikey=${keyForApi}`) {
+async function fetchApiDataForsearch(apiUrl) {
+  keyForApiFn();
+  try {
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error("Error occurs");
     }
-    .stock-name {    
-        font-family: 'Agdasima', sans-serif;
-        font-size: 14px;
-        font-weight: 800;
+    const data = await response.json();
+    console.log(data, " searching fetch")
+
+    if (data["Error Message"]) {
+      tableBody.innerHTML = "";
+      alert("No Data in API");
     }
-    .stock-symbol {
-        font-size: 12px;
-        font-weight: 400;
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    }
-    .stock:hover {
-        transition: 0.3s ease;
-        transform: scale(1.03);
+    else if ("Note".includes("Thank you for using Alpha Vantage")) {
+      tableBody.innerHTML = "";
+      alert("Please try after some time - Standard API call frequency is 5 calls per minute and 500 calls per day")
     }
 
-    .region-heading {
-        font-family: 'Agdasima', sans-serif;
-        font-size: 12px;
-        padding-left: 15px;
-        
-    }
-    .region {
-        font-family: Georgia, 'Times New Roman', Times, serif;
-        font-size: 13px;
-    }
+    searchingOptionLi.innerHTML = "";
 
-    .trade-selection {
-        padding: 4px 8px;
-        border-radius: 5px;
-        border: none;
-        font-size: 12px;
-        margin-left: 10px;
+    let result = await data.bestMatches;
+    if (result === undefined || result.length === 0) {
+      searchingOptionLi.innerText = "No Result Found";
     }
-    .trade-selection.active {
-        font-size: 13px;
-        font-weight: 800;
-    }
-    .trade-data {
-        border: none;
-        padding: 7px;
-        margin-top: 10px;
-        border-radius: 4px;
-    }
-    .trade-data.remove {
-        font-size: 11px;
-        width: 65px;
-    }
-    .trade-data.analytics {
-        font-size: 11px;
-        width: 97px;
-    }
+    searchBarRender(result);
 
-    .trade-type-selection {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        padding: 10px 5px;
-    }
+  } catch (error) {
+    tableBody.innerHTML = "";
+    console.log(error, " Error is here");
+  }
+}
 
 
-    /* ----------right side data------------ */
-    .rights-side-data {
-        margin-top: 10px;
-    }
-    #search-close-button {
-        font-size: 15px;
-        padding: 6px 8px;
-        border: none;
-    }
 
-    #search-bar {
-        height: 25px;
-        font-size: 15px;
-        border: none;
-        width: 75%;
-        padding-left: 10px;
-    }
-    #searching-section button {
-        border: none;
-    }
 
-    #searching-section {
-        border: 1px solid black;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 270px;
-    }
+let searchResultData = [];
 
-    #fetchStart {
-        border: none;
-        font-size: 15px;
-        padding: 6px 8px;
-    }
+function searchBarRender(searchValue) {
+  console.log(searchValue, " search value")
+  searchResultData = (searchValue);
 
-    .searching-option {
-        display: flex;
-        flex-direction: column;
-        margin-right: 10px;
-        position: absolute;
-        right: 8px;
-        top: 8px;
-    }
+  for (const item of searchValue) {
+    searchingOptionLi.innerHTML +=
+      `
+        <li>
+            <div>
+                <h3>${item["2. name"]}</h3>
+                <h5>${item["1. symbol"]}</h5>
+            </div>
+            <h4>
+                ${item["9. matchScore"]}
+            </h4>
+            <i id="eye" onclick="symboltesting(this.getAttribute('symbol'))" symbol=${item["1. symbol"]} class="fa-solid fa-eye"></i>
+        </li>
+      `;
+  }
+}
 
-    .searching-option-li {
-        display: flex;
-        flex-direction: column;
-        padding: 8px;
-        gap: 8px;
-        max-height: 60vh;
-        overflow: scroll;
-    }
+if (localStorage.length > 0) {
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    const value = JSON.parse(localStorage.getItem(key));
+    (value[0].wishList) && watchListCardRender(value);
+  }
+}
 
-    .searching-option-li li {
-        display: flex;
-        flex-direction: row;
-        gap: 8px;
-        width: 250px;
-        height: fit-content;
-        border-radius: 6px;
-        justify-content: space-between;
-        align-items: center;
-        padding-left: 8px;
-        margin-bottom: 10px;
-    }
+function symboltesting(e) {
+  let watchListObject = [];
+  searchResultData.forEach((item) => {
+    if (item["1. symbol"] == e) {
+      const objToPush = {
+        name: item["2. name"],
+        symbol: item["1. symbol"],
+        region: item["4. region"],
+        wishList: true
+      };
 
-    .searching-option-li li div{
-        display: flex;
-        padding: 5px;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .searching-option-li li h4{
-        font-size: 12px;
-        font-family:Verdana, Geneva, Tahoma, sans-serif;
+      let getWatchListObject = [];
+      let getWatchListObjectstore = JSON.parse(localStorage.getItem(e));
+      (getWatchListObjectstore && getWatchListObjectstore.length > 0) && (getWatchListObject = getWatchListObjectstore)
+      getWatchListObject.push(objToPush);
+      localStorage.setItem(e, JSON.stringify(getWatchListObject));
+      watchListObject = getWatchListObject;
 
     }
-    .searching-option-li li h5{
-        font-family:monospace;
-        font-size: 12px;
-        font-weight: 200px;
-        padding: 0px 4px;
-    }
-    .searching-option-li li h3{
-        font-size: 15px;
-        font-family:monospace;
-    }
+  })
+  watchListCardRender(watchListObject);
+  watchListDataContainer(e);
+  intiallyCallingWatchListDataContainer();
+}
 
-    .searching-option-li button {
-        height: 20px;
-        width: 80px;
-        border: none;
+
+function watchListCardRender(searchResultData) {
+
+  for (const item of searchResultData) {
+    document.getElementsByClassName('random-data-main-page')[0].innerHTML =
+      `
+      <div class="stock" id="${item.symbol}">
+        <div>
+            <i class="fa-sharp fa-solid fa-money-bill-trend-up"></i>
+            <span class="stock-name">${item.name} </span>
+        </div>
+        <div class="stock-region"> 
+            <span class="stock-symbol"> ${item.symbol} </span>            
+            <span class="region-heading">Region</span>
+            <span class="region">${item.region}</span>
+            
+        </div>
+        <div class="stock-latest-price">
+          
+        </div>
+        <span>
+            <button class="trade-data remove" value="${item.symbol}">Take off</button>
+            <button class="trade-data analytics">Data Analytics</button>
+        </span>
+      </div>
+    `
+      + document.getElementsByClassName('random-data-main-page')[0].innerHTML
+  }
+  removingData();
+}
+
+
+// when directly see the data from watch list container
+intiallyCallingWatchListDataContainer();
+function intiallyCallingWatchListDataContainer() {
+  let tradeDataAttachingInDataContainer = document.querySelectorAll('.analytics');
+
+  tradeDataAttachingInDataContainer.forEach((item) => {
+    item.addEventListener('click', (e) => {
+      let itemName = document.getElementsByClassName('stock');
+      for (let i = 0; i < itemName.length; i++) {
+        itemName[i].style.backgroundColor = "";
+      }
+
+      const container = e.target.parentElement.parentElement;
+
+      const tradeType = container.childNodes[3].innerText.split(" ")[0];
+      typeOfTrade(tradeType);
+      container.style.backgroundColor = '#B7B7B7';
+    });
+  });
+}
+
+function watchListDataContainer(e) {
+  typeOfTrade(e);
+}
+
+function typeOfTrade(entry) {
+  let keyWordOfTrade;
+  document.querySelectorAll(".trade-selection").forEach((item) => {
+    item.addEventListener('click', (e) => {
+      if (e.target.innerHTML === 'INTRADAY') {
+        keyWordOfTrade = "TIME_SERIES_INTRADAY&interval=5min";
+        choosingTradeDetails = "Time Series (5min)";
+        document.querySelector('.trading-type-heading').innerHTML = "Time Series (5min)";
+        (e.target.parentElement.children[0].classList.add('active'));
+        (e.target.parentElement.children[1].classList.remove('active'));
+        (e.target.parentElement.children[2].classList.remove('active'));
+        (e.target.parentElement.children[3].classList.remove('active'));
+        keyForApiFn()
+      } else if (e.target.innerHTML === 'DAILY') {
+        document.querySelector('.trading-type-heading').innerHTML = "Time Series (Daily)";
+        keyWordOfTrade = "TIME_SERIES_DAILY_ADJUSTED"
+        choosingTradeDetails = "Time Series (Daily)";
+        (e.target.parentElement.children[0].classList.remove('active'));
+        (e.target.parentElement.children[1].classList.add('active'));
+        (e.target.parentElement.children[2].classList.remove('active'));
+        (e.target.parentElement.children[3].classList.remove('active'));
+        keyForApiFn()
+      } else if (e.target.innerHTML === 'WEEKLY') {
+        document.querySelector('.trading-type-heading').innerHTML = "Weekly Time Series";
+        keyWordOfTrade = "TIME_SERIES_WEEKLY"
+        choosingTradeDetails = "Weekly Time Series";
+        (e.target.parentElement.children[0].classList.remove('active'));
+        (e.target.parentElement.children[1].classList.remove('active'));
+        (e.target.parentElement.children[2].classList.add('active'));
+        (e.target.parentElement.children[3].classList.remove('active'));
+        keyForApiFn()
+      } else if (e.target.innerHTML === 'MONTHLY') {
+        document.querySelector('.trading-type-heading').innerHTML = "Monthly Time Series";
+        keyWordOfTrade = "TIME_SERIES_MONTHLY"
+        choosingTradeDetails = "Monthly Time Series";
+        (e.target.parentElement.children[0].classList.remove('active'));
+        (e.target.parentElement.children[1].classList.remove('active'));
+        (e.target.parentElement.children[2].classList.remove('active'));
+        (e.target.parentElement.children[3].classList.add('active'));
+        keyForApiFn()
+      }
+      let tradeUrl = `https://www.alphavantage.co/query?function=${keyWordOfTrade}&symbol=${entry}&apikey=${keyForApi}`;
+      console.log(tradeUrl, " urllllllllllllllll")
+
+      fetchApiData(tradeUrl);
+    });
+  });
+}
+
+
+// Table data filling
+function tableDataFill(e) {
+  console.log(e)
+
+  // let tableBody = document.getElementsByClassName('table-data-filling-in-script')[0];
+  tableBody.innerHTML = '';
+  let count = 0;
+
+  for (let date in e) {
+    if (e.hasOwnProperty(date)) {
+      let rowData = e[date];
+      let volume = (rowData['5. volume']);
+      if (volume === undefined) {
+        volume = (rowData['6. volume']);
+      }
+      let row =
+        `
+        <tr>
+          <td>${date}</td>
+          <td>${rowData['1. open']}</td>
+          <td>${rowData['2. high']}</td>
+          <td>${rowData['3. low']}</td>
+          <td>${rowData['4. close']}</td>
+          <td>${volume}</td>
+        </tr>
+      `;
+      tableBody.innerHTML += row;
+      count++;
+
+      if (count >= 15) {
+        break;
+      }
     }
   }
-@media only screen and (max-width: 767px) {
-    /*---------- Nav bar --------------*/
-    #logo-img {
-        width: 60px;
-        padding: 10px;
-    }
-    .left-side-bar {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;   
-        border-radius: 5px;
-        padding-left: 2px;
-        padding-bottom: 8px;
-        height: 98vh;
-        width: 100%;
-        margin: auto;
-        margin-left: 6px;
-    }
-
-    .user-selection-nav-bar li a {
-        text-decoration: none;
-        font-weight: 640;
-        font-size: 8.5px;
-    }
-
-    /* -------------- Main Page --------------- */
-    .heading-portion>h1 {
-        padding: 8px;
-        padding-left: 10px;
-        font-family:Verdana, Geneva, Tahoma, sans-serif ;
-    }
-    .heading-portion>h1 {
-        font-size: 13px;
-    }
-    .error-message {
-        font-size: 12px;
-        color: red;
-        font-weight: 700;
-    }
-
-    .table-of-data {
-        margin: auto;
-        width: 95%;
-        height: 60vh;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-    }
-
-    .table-heading {
-        font-weight: 800;
-        font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        font-size: 8px;
-    }
-    .table-heading > th{
-        padding: 2px 14px;
-    }
-    .table-data-filling-in-script {
-        font-size: 10px;
-    }
-
-    .random-data-main-page {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        width: 95%;
-        padding: 7px;
-        border-bottom-left-radius: 4px; 
-        border-bottom-right-radius: 4px; 
-        height: 30vh;
-        overflow: scroll; 
-    }
-
-    .stock {    
-        border-radius: 4px;    
-        width: 220px;
-        height: 100px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 6px;
-        transition: 0.3s ease;    
-        margin: 6px;
-        text-align: center;
-        box-shadow: 0px 8px 8px 0px rgba(0, 0, 0, 0.403);
-    }
-    .stock-name {    
-        font-family: 'Agdasima', sans-serif;
-        font-size: 12px;
-        font-weight: 800;
-    }
-    .stock-symbol {
-        font-size: 9px;
-        font-weight: 400;
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    }
-    .stock:hover {
-        transition: 0.3s ease;
-        transform: scale(1.02);
-    }
-
-    .region-heading {
-        font-family: 'Agdasima', sans-serif;
-        font-size: 10px;
-        padding-left: 10px;
-        
-    }
-    .region {
-        font-family: Georgia, 'Times New Roman', Times, serif;
-        font-size: 10px;
-    }
-
-    .trade-selection {
-        padding: 2px 5px;
-        border-radius: 4px;
-        border: none;
-        font-size: 8px;
-        margin-left: 8px;
-    }
-    .trade-selection.active {
-        font-size: 9px;
-        font-weight: 700;
-    }
-    .trade-data {
-        border: none;
-        padding: 6px;
-        margin-top: 8px;
-        border-radius: 4px;
-    }
-    .trade-data.remove {
-        font-size: 10px;
-        width: 65px;
-    }
-    .trade-data.analytics {
-        font-size: 10px;
-        width: 97px;
-    }
-
-    .trade-type-selection {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        padding: 10px 5px;
-    }
+}
 
 
-    /* ----------right side data------------ */
-    .rights-side-data {
-        margin-top: 8px;
-    }
-    #search-close-button, #fetchStart {
-        font-size: 10px;
-        padding: 9px 8px;
-        border: none;
-    }
+// local storage delete
 
-    #search-bar {
-        height: 25px;
-        font-size: 14px;
-        border: none;
-        width: 70%;
-        padding-left: 8px;
-    }
-    #searching-section button {
-        border: none;
-    }
+function removingData() {
+  let tradeDataAttachingInDataContainer = document.querySelectorAll('.remove');
+  tradeDataAttachingInDataContainer.forEach((item) => {
+    item.addEventListener('click', (e) => {
+      localStorage.removeItem(e.target.value);
+      let item = document.getElementById(e.target.value);
+      item.remove();
+    });
+  });
+}
 
-    #searching-section {
-        border: 1px solid black;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 240px;
-    }
+// Search Result toggle
+let searchBarClose = document.getElementById('search-close-button')
+searchBtn.addEventListener('click', () => {
+  searchingOptionLi.style.display = 'block';
+})
+searchBarClose.addEventListener('click', () => {
+  searchingOptionLi.style.display = 'none';
+  searchEvent.value = "";
+})
 
-    
 
-    .searching-option {
-        display: flex;
-        flex-direction: column;
-        margin-right: 8px;
-        position: absolute;
-        right: 8px;
-        top: 6px;
-    }
 
-    .searching-option-li {
-        display: flex;
-        flex-direction: column;
-        padding: 6px;
-        gap: 6px;
-        max-height: 60vh;
-        overflow: scroll;
-    }
 
-    .searching-option-li li {
-        display: flex;
-        flex-direction: row;
-        gap: 8px;
-        width: 220px;
-        height: fit-content;
-        border-radius: 4px;
-        justify-content: space-between;
-        align-items: center;
-        padding-left: 8px;
-        margin-bottom: 10px;
-    }
+let leftSideBar = document.getElementsByClassName('left-side-bar')[0];
+let barIcon = document.getElementsByClassName('bar-icon')[0];
+let barClose = document.getElementsByClassName('bar-close')[0];
 
-    .searching-option-li li div{
-        display: flex;
-        padding: 5px;
-        flex-direction: column;
-        align-items: flex-start;
-    }
 
-    .searching-option-li li h4{
-        font-size: 10px;
-        font-family:Verdana, Geneva, Tahoma, sans-serif;
-
-    }
-    .searching-option-li li h5{
-        font-family:monospace;
-        font-size: 10px;
-        font-weight: 200px;
-        padding: 0px 4px;
-    }
-    .searching-option-li li h3{
-        font-size: 11px;
-        font-family:monospace;
-    }
-
-    .searching-option-li button {
-        height: 20px;
-        width: 80px;
-        border: none;
-    }
-    
+barIcon.addEventListener('click', () => {
+  console.log("hi")
+  leftSideBar.style.display = 'flex';
+  barClose.style.display = 'block';
+  leftSideBar.style.transition = "2s ease";
+})
+barClose.addEventListener('click', () => {
+  leftSideBar.style.display = 'none';
+  barClose.style.display = 'none';
+  leftSideBar.style.transition = "2s ease";
+})
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 590) {
+    leftSideBar.style.display = 'flex';
+  } else {
+    leftSideBar.style.display = 'none';
+    barClose.style.display = 'none';
   }
-@media only screen and (max-width: 480px) {
-    .root-body {
-        border-radius: 0.4rem;
-        display: grid;
-        height: 100vh;
-        grid-template-columns: 2fr 1.1fr;    
-    }
-    /*---------- Nav bar --------------*/
-    #logo-img {
-        width: 50px;
-    }
-    .bar-close {
-        display: none;
-        width: 10px;
-        position: absolute;
-        padding-left: 19dvw;
-        z-index: 2;
-        transition: 1s ease-in-out;
-    }
-    .bar-icon {
-        transition: 1s ease-in-out;
-        display: inline-block;
-        width: 10px;
-        position: absolute;
-        padding-left: 5px;
-        z-index: 0;
-    }
-    
-    .left-side-bar {
-        transition: 2s ease;
-        position: absolute;
-        z-index: 0;
-        display: none;
-        flex-direction: column;
-        justify-content: space-between;   
-        border-radius: 5px;
-        padding-left: 5px;
-        padding-bottom: 8px;
-        height: 400px;
-        width: 23%;
-        margin: auto;
-        margin-left: 2px;
-    }
-
-    .user-selection-nav-bar li a {
-        text-decoration: none;
-        font-weight: 640;
-        font-size: 8.5px;
-    }
-
-    /* -------------- Main Page --------------- */
-    .heading-portion>h1 {
-        padding: 10px;
-        padding-left: 25px;
-        font-family:Verdana, Geneva, Tahoma, sans-serif ;
-    }
-    .heading-portion>h1 {
-        font-size: 10px;
-    }
-    .error-message {
-        font-size: 10px;
-        color: red;
-        font-weight: 700;
-    }
-
-    .table-of-data {
-        margin: auto;
-        width: 95%;
-        height: 50vh;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-    }
-
-    .table-heading {
-        font-weight: 800;
-        font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        font-size: 6px;
-    }
-    .table-heading > th{
-        padding: 2px 10px;
-    }
-    .table-data-filling-in-script {
-        font-size: 8px;
-    }
-
-    .random-data-main-page {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        width: 95%;
-        padding: 5px;
-        border-bottom-left-radius: 4px; 
-        border-bottom-right-radius: 4px; 
-        height: 30vh;
-        overflow: scroll; 
-    }
-
-    .stock {    
-        border-radius: 3px;    
-        width: 180px;
-        height: 85px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 4px;
-        transition: 0.3s ease;    
-        margin: 5px;
-        text-align: center;
-        box-shadow: 0px 8px 8px 0px rgba(0, 0, 0, 0.403);
-    }
-    .stock-name {    
-        font-family: 'Agdasima', sans-serif;
-        font-size: 9px;
-        font-weight: 800;
-    }
-    .stock-symbol {
-        font-size: 7px;
-        font-weight: 400;
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    }
-    .stock:hover {
-        transition: 0.3s ease;
-        transform: scale(1.02);
-    }
-
-    .region-heading {
-        font-family: 'Agdasima', sans-serif;
-        font-size: 8px;
-        padding-left: 10px;
-        
-    }
-    .region {
-        font-family: Georgia, 'Times New Roman', Times, serif;
-        font-size: 8px;
-    }
-
-    .trade-selection {
-        padding: 2px 4px;
-        border-radius: 3px;
-        border: none;
-        font-size: 6px;
-        margin-left: 6px;
-    }
-    .trade-selection.active {
-        font-size: 7px;
-        font-weight: 600;
-    }
-    .trade-data {
-        border: none;
-        padding: 5px;
-        margin-top: 8px;
-        border-radius: 4px;
-    }
-    .trade-data.remove {
-        font-size: 8px;
-        width: 45px;
-    }
-    .trade-data.analytics {
-        font-size: 8px;
-        width: 75px;
-    }
-
-    .trade-type-selection {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        padding: 10px 5px;
-    }
+})
 
 
-    /* ----------right side data------------ */
-    .rights-side-data {
-        margin-top: 8px;
-    }
-    #search-close-button, #fetchStart {
-        font-size: 8px;
-        padding: 9px 9px;
-        border: none;
+const category = 'business';
+
+setInterval(() => {
+  fetchQuotesByCategory(category);
+
+}, 5000)
+
+
+const fetchQuotesByCategory = async (category) => {
+  try {
+    const response = await fetch(`https://api.api-ninjas.com/v1/quotes?category=${category}`, {
+      method: 'GET',
+      headers: {
+        'X-Api-Key': 'E8PgODjCuHl37Fg9L1GDIg==j4zCl9yImLIk9l8b',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Error: ' + response.status);
     }
 
-    #search-bar {
-        /* height: 25px; */
-        font-size: 10px;
-        border: none;
-        width: 70%;
-        padding-left: 4px;
-    }
-    #searching-section button {
-        border: none;
-    }
-
-    #searching-section {
-        border: 1px solid black;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 180px;
-    }
-
-    
-
-    .searching-option {
-        display: flex;
-        flex-direction: column;
-        margin-right: 6px;
-        position: absolute;
-        right: 6px;
-        top: 6px;
-    }
-
-    .searching-option-li {
-        display: flex;
-        flex-direction: column;
-        padding: 8px;
-        gap: 5px;
-        max-height: 40vh;
-        overflow: scroll;
-    }
-
-    .searching-option-li li {
-        display: flex;
-        flex-direction: row;
-        gap: 4px;
-        width: 160px;
-        height: fit-content;
-        border-radius: 3px;
-        justify-content: space-between;
-        align-items: center;
-        padding-left: 6px;
-        margin-bottom: 10px;
-    }
-
-    .searching-option-li li div{
-        display: flex;
-        padding: 5px;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .searching-option-li li h4{
-        font-size: 8px;
-        font-family:Verdana, Geneva, Tahoma, sans-serif;
-
-    }
-    .searching-option-li li h5{
-        font-family:monospace;
-        font-size: 8px;
-        font-weight: 200px;
-        padding: 0px 4px;
-    }
-    .searching-option-li li h3{
-        font-size: 9px;
-        font-family:monospace;
-    }
-
-    .searching-option-li button {
-        height: 20px;
-        width: 80px;
-        border: none;
-    }
+    const result = await response.json();
+    document.getElementsByClassName('quote')[0].innerHTML = result[0].quote;
+    document.getElementsByClassName('author')[0].innerHTML = result[0].author;
+  } catch (error) {
+    console.error('Error: ', error);
   }
+};
+
+
+
+// news feed
+
+let newsFeed = document.getElementsByClassName('news-feed')[0];
+let newsFeedBanner = document.getElementsByClassName('news-feed-banner')[0];
+let newsFeedTitle = document.getElementsByClassName('news-feed-title')[0];
+let newsFeedAnchorLink = document.getElementsByClassName('newsfeed-anchor-link')[0];
+
+const url = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=COIN,CRYPTO:BTC,FOREX:USD&time_from=20220410T0130&limit=1000&apikey=${keyForApi}`;
+
+newsFeedApi(url);
+let k =0;
+async function newsFeedApi(url) {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    let dataStore = (data.feed);
+
+    
+      let timerFn = setInterval(() => {
+          newFeedRender(dataStore[k], dataStore.length);
+        }, 5000);      
+  } catch (error) {
+    console.log('Error:', error);
+  }
+}
+
+function newFeedRender(dataStore, len) {
+
+  let { banner_image, title, url } = dataStore;
+  console.log(dataStore.banner_image)
+  let banner = dataStore.banner_image;
+  if (dataStore.banner_image === null) {
+    banner = "https://www.fisdom.com/wp-content/uploads/2021/11/shutterstock_191449442.webp";
+  }
+  newsFeed.innerHTML =
+        `
+      <img class="news-feed-banner"  src="${banner}" alt="news-img">
+      <div class="news-feed-a-title">
+          <p class="news-feed-title">${dataStore.title}</p>
+          <a target="_blank" class="newsfeed-anchor-link" href="${dataStore.url}">Read More</a>
+      </div>
+      `
+      k++;
+      if (k==len-1) {
+        k=0;
+      }
+}
+
+
+
